@@ -23,7 +23,7 @@ class UI:
 
         self.__init_img_frame("Image")
         self.__init_filter_grid("Kernel convolution matrix")
-        self.__init_footer_buttons(("Select image", "Apply filter"))
+        self.__init_footer_buttons(("Select image", "Apply filter", "Save"))
 
     def get_buttons(self):
         return self.footer_btns
