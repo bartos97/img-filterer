@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (
     QGridLayout, QHBoxLayout, QVBoxLayout, QGroupBox,
-    QPushButton, QLineEdit
+    QPushButton, QLineEdit, QLabel,
+    QSizePolicy
 )
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QRegExpValidator
@@ -13,18 +14,15 @@ class UI:
         }
 
         self.window_ptr = window_ptr
-        self.main_vgrid = None
+        self.image_frame = None
+        self.image_frame_content_label = None
         self.footer_btns = []
         self.kernel_matrix = []
 
-        self.init_main_grid()
-        self.init_photo_frame("Image")
+        self.main_grid = QVBoxLayout()
+        self.init_img_frame("Image")
         self.init_filter_grid("Kernel convolution matrix")
         self.init_footer_buttons(("Select image", "Apply filter"))
-
-    def show_gui(self):
-        self.window_ptr.setLayout(self.main_vgrid)
-        self.window_ptr.show()
 
     def get_buttons(self):
         return self.footer_btns
@@ -32,15 +30,34 @@ class UI:
     def get_inputs(self):
         return self.kernel_matrix
 
-    def init_main_grid(self):
-        self.main_vgrid = QVBoxLayout()
+    def get_image_content_label(self):
+        return self.image_frame_content_label
 
-    def init_photo_frame(self, title: str):
+    def get_image_frame_size(self):
+        return (
+            self.image_frame_content_label.geometry().width(),
+            self.image_frame_content_label.geometry().height()
+        )
+
+    def show_gui(self):
+        self.window_ptr.setLayout(self.main_grid)
+        self.window_ptr.show()
+
+    def init_img_frame(self, title: str):
+        self.image_frame_content_label = QLabel()
+        self.image_frame_content_label.setAlignment(Qt.AlignCenter)
+        image_layout = QVBoxLayout()
+        image_layout.addWidget(self.image_frame_content_label)
+
+        self.image_frame = QGroupBox(title)
+        self.image_frame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.image_frame.setLayout(image_layout)
+
         local_layout = QVBoxLayout()
         local_layout.setAlignment(Qt.AlignTop)
-        frame = QGroupBox(title)
-        local_layout.addWidget(frame)
-        self.main_vgrid.addLayout(local_layout)
+        local_layout.addWidget(self.image_frame)
+
+        self.main_grid.addLayout(local_layout)
 
     def init_filter_grid(self, title: str):
         local_layout = QVBoxLayout()
@@ -48,7 +65,7 @@ class UI:
         frame = QGroupBox(title)
         grid = QGridLayout()
 
-        # Regular expresion that will allow to input only int or float
+        # Regular expresion that will allow to input only int or float (dot seperated)
         regex = QRegExp("(\d+(?:\.\d+)?)")
 
         self.kernel_matrix = [[QLineEdit() for _ in range(3)] for _ in range(3)]
@@ -59,7 +76,7 @@ class UI:
 
         frame.setLayout(grid)
         local_layout.addWidget(frame)
-        self.main_vgrid.addLayout(local_layout)
+        self.main_grid.addLayout(local_layout)
 
     def init_footer_buttons(self, titles: tuple):
         local_layout = QHBoxLayout()
@@ -70,4 +87,4 @@ class UI:
             self.footer_btns.append(tmp_btn)
             local_layout.addWidget(tmp_btn)
 
-        self.main_vgrid.addLayout(local_layout)
+        self.main_grid.addLayout(local_layout)
