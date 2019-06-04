@@ -13,16 +13,17 @@ class UI:
             'GRID_GUTTER': 15
         }
 
-        self.window_ptr = window_ptr
         self.image_frame = None
         self.image_frame_content_label = None
         self.footer_btns = []
         self.kernel_matrix = []
 
-        self.main_grid = QVBoxLayout()
-        self.init_img_frame("Image")
-        self.init_filter_grid("Kernel convolution matrix")
-        self.init_footer_buttons(("Select image", "Apply filter"))
+        self.__window_ptr = window_ptr
+        self.__main_grid = QVBoxLayout()
+
+        self.__init_img_frame("Image")
+        self.__init_filter_grid("Kernel convolution matrix")
+        self.__init_footer_buttons(("Select image", "Apply filter"))
 
     def get_buttons(self):
         return self.footer_btns
@@ -40,10 +41,10 @@ class UI:
         )
 
     def show_gui(self):
-        self.window_ptr.setLayout(self.main_grid)
-        self.window_ptr.show()
+        self.__window_ptr.setLayout(self.__main_grid)
+        self.__window_ptr.show()
 
-    def init_img_frame(self, title: str):
+    def __init_img_frame(self, title: str):
         self.image_frame_content_label = QLabel()
         self.image_frame_content_label.setAlignment(Qt.AlignCenter)
         image_layout = QVBoxLayout()
@@ -57,9 +58,9 @@ class UI:
         local_layout.setAlignment(Qt.AlignTop)
         local_layout.addWidget(self.image_frame)
 
-        self.main_grid.addLayout(local_layout)
+        self.__main_grid.addLayout(local_layout)
 
-    def init_filter_grid(self, title: str):
+    def __init_filter_grid(self, title: str):
         local_layout = QVBoxLayout()
         local_layout.setAlignment(Qt.AlignBottom)
         frame = QGroupBox(title)
@@ -76,9 +77,9 @@ class UI:
 
         frame.setLayout(grid)
         local_layout.addWidget(frame)
-        self.main_grid.addLayout(local_layout)
+        self.__main_grid.addLayout(local_layout)
 
-    def init_footer_buttons(self, titles: tuple):
+    def __init_footer_buttons(self, titles: tuple):
         local_layout = QHBoxLayout()
         local_layout.setContentsMargins(0, self.options['GRID_GUTTER'], 0, 0)
 
@@ -87,4 +88,4 @@ class UI:
             self.footer_btns.append(tmp_btn)
             local_layout.addWidget(tmp_btn)
 
-        self.main_grid.addLayout(local_layout)
+        self.__main_grid.addLayout(local_layout)
