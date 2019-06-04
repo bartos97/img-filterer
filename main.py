@@ -5,7 +5,8 @@ from filterer.app import App
 
 if __name__ == '__main__':
     app_instance = QApplication(sys.argv)
-    ex = App(
+    application = App(
+        'Python image filterer by Bartłomiej Zając',
         (0, 50),
         (800, 600)
     )
