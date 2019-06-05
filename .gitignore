@@ -137,3 +137,6 @@ gen
 .vs/
 bin/
 *.vcxproj.*
+
+# Program output files
+out*
