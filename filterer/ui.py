@@ -5,13 +5,15 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QRegExpValidator
-import numpy as np
+
+from filterer.exceptions import *
 
 
 class UI:
     def __init__(self, window_ptr):
         self.options = {
-            'GRID_GUTTER': 15
+            'GRID_GUTTER': 15,
+            "INPUTS_WIDTH": 3,
         }
 
         self.image_frame = None
@@ -37,7 +39,7 @@ class UI:
                 if len(data):
                     vals.append(float(data))
                 else:
-                    vals.append(1.0)
+                    raise EmptyFieldError("You must fill all the inputs in kernel!")
         return vals
 
     def get_image_content_label(self):
@@ -78,7 +80,10 @@ class UI:
         # Regular expresion that will allow to input only int or float (dot seperated)
         regex = QRegExp("(\d+(?:\.\d+)?)")
 
-        self.kernel_matrix = [[QLineEdit() for _ in range(3)] for _ in range(3)]
+        self.kernel_matrix = [
+            [QLineEdit() for _ in range(self.options['INPUTS_WIDTH'])]
+            for _ in range(self.options['INPUTS_WIDTH'])
+        ]
         for i, row in enumerate(self.kernel_matrix):
             for j, input_elem in enumerate(row):
                 input_elem.setValidator(QRegExpValidator(regex))

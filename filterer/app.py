@@ -1,4 +1,4 @@
-import sys, time
+import sys
 
 from filterer.ui import *
 import filterer.dll_utils as dll
@@ -57,8 +57,16 @@ class App(QWidget):
             return None
 
         image_data = np.array(self.image_pil)
-        kernel = np.array(self.ui.get_input_values(), dtype=np.float32)
-        self.lib.filter_kernel_conv(image_data, kernel)
+        try:
+            kernel = np.array(self.ui.get_input_values(), dtype=np.float32)
+        except FiltererException as e:
+            msg = QMessageBox()
+            msg.setText(e.message)
+            msg.setIcon(QMessageBox.Information)
+            msg.exec_()
+            return None
+
+        self.lib.filter_kernel_conv(image_data, self.image_pil.width, kernel)
         self.image_pil = Image.fromarray(image_data)
 
         self.__pil_image_to_pixmap()
