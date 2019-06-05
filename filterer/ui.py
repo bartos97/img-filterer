@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QRegExpValidator
+import numpy as np
 
 
 class UI:
@@ -28,8 +29,16 @@ class UI:
     def get_buttons(self):
         return self.footer_btns
 
-    def get_inputs(self):
-        return self.kernel_matrix
+    def get_input_values(self):
+        vals = []
+        for i, row in enumerate(self.kernel_matrix):
+            for j, input_elem in enumerate(row):
+                data = input_elem.text()
+                if len(data):
+                    vals.append(float(data))
+                else:
+                    vals.append(1.0)
+        return vals
 
     def get_image_content_label(self):
         return self.image_frame_content_label

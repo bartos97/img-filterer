@@ -31,6 +31,20 @@ class Lib:
                                            const float* kernel_data, const unsigned int kernel_size);
         """
 
+        if kernel.ndim == 2:
+            rows, cols = kernel.shape
+            if rows != cols:
+                return None
+            kernel = kernel.flatten()
+            kernel_size = rows
+        elif kernel.ndim == 1:
+            kernel_size = math.sqrt(kernel.size)
+            if not kernel_size.is_integer():
+                return None
+            kernel_size = c_int(int(kernel_size))
+        else:
+            return None
+
         handler = self.__handle.filter_kernel_conv
         handler.argtypes = (
             np.ctypeslib.ndpointer(np.uint8),
@@ -39,4 +53,5 @@ class Lib:
             c_int
         )
         handler.restype = None
-        handler(image, image.size, kernel, kernel.size)
+
+        handler(image, image.size, kernel, kernel_size)

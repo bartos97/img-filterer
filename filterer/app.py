@@ -1,4 +1,4 @@
-import sys
+import sys, time
 
 from filterer.ui import *
 import filterer.dll_utils as dll
@@ -44,7 +44,7 @@ class App(QWidget):
         self.input_file, _ = QFileDialog.getOpenFileName(self,
                                                          'Open file',
                                                          './example_images/',
-                                                         'Image files (*.jpg *.gif)')
+                                                         'Image files (*.jpg *.gif *.png *.bmp)')
         if self.input_file:
             self.image_pil = Image.open(self.input_file)
             self.image_pil = ImageOps.grayscale(self.image_pil)
@@ -52,10 +52,12 @@ class App(QWidget):
             self.__refresh_pixmap()
 
     def slot_apply_filter(self):
-        self.ui.image_frame_content_label.setText("Working...")
+        if not self.image_pil:
+            self.ui.image_frame_content_label.setText("Select image first!")
+            return None
 
         image_data = np.array(self.image_pil)
-        kernel = np.full(9, 0.25, dtype=np.float32)
+        kernel = np.array(self.ui.get_input_values(), dtype=np.float32)
         self.lib.filter_kernel_conv(image_data, kernel)
         self.image_pil = Image.fromarray(image_data)
 
@@ -63,6 +65,10 @@ class App(QWidget):
         self.__refresh_pixmap()
 
     def slot_save_file(self):
+        if not self.image_pil:
+            self.ui.image_frame_content_label.setText("Select image first!")
+            return None
+
         msg = QMessageBox()
         try:
             self.image_pil.save("./out.jpg", "JPEG")
