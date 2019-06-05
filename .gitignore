@@ -140,3 +140,6 @@ bin/
 
 # Program output files
 out*
+
+# Non-public things
+example_images/__*
