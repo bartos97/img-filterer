@@ -132,3 +132,8 @@ dmypy.json
 *.iml
 out
 gen
+
+# Visual Studio
+.vs/
+bin/
+*.vcxproj.*
