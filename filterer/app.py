@@ -1,8 +1,13 @@
-from filterer.ui import *
 import sys
+
+from filterer.ui import *
+import filterer.dll_utils as dll
+
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QMessageBox
 from PyQt5.QtGui import QPixmap, QImage
 from PIL import Image, ImageOps, ImageQt
+
+import numpy as np
 
 
 class App(QWidget):
@@ -17,6 +22,8 @@ class App(QWidget):
 
     def __init__(self, title: str, window_size: tuple):
         super().__init__()
+
+        self.lib = dll.Lib('./img-lib/lib/img-lib')
 
         self.input_file = ""
         self.image_pixmap = None
@@ -46,7 +53,12 @@ class App(QWidget):
 
     def slot_apply_filter(self):
         self.ui.image_frame_content_label.setText("Working...")
-        self.image_pil = Image.eval(self.image_pil, lambda x: x/2)
+
+        image_data = np.array(self.image_pil)
+        kernel = np.full(9, 0.25, dtype=np.float32)
+        self.lib.filter_kernel_conv(image_data, kernel)
+        self.image_pil = Image.fromarray(image_data)
+
         self.__pil_image_to_pixmap()
         self.__refresh_pixmap()
 
