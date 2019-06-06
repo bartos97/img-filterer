@@ -42,9 +42,9 @@ class App(QWidget):
 
     def slot_get_file(self):
         self.__input_file, _ = QFileDialog.getOpenFileName(self,
-                                                         'Open file',
-                                                         './example_images/',
-                                                         'Image files (*.jpg *.gif *.png *.bmp)')
+                                                           'Open file',
+                                                           './example_images/',
+                                                           'Image files (*.jpg *.gif *.png *.bmp)')
         if self.__input_file:
             self.__image_pil = Image.open(self.__input_file)
             self.__image_pil = ImageOps.grayscale(self.__image_pil)
@@ -53,7 +53,7 @@ class App(QWidget):
 
     def slot_apply_filter(self):
         if not self.__image_pil:
-            self.ui.__image_frame_content_label.setText("Select image first!")
+            self.ui.get_image_content_label().setText("Select image first!")
             return None
 
         image_data = np.array(self.__image_pil)

@@ -79,6 +79,7 @@ void IMGLIB_API filter_kernel_conv(uint8_t* image_data, const uint64_t pixels_am
     }
 
     kernel.data = new float[size_t(kernel.last_index) + 1];
+    // normalize kernel convolution matrix if it's necessary
     if (kernel.sum > 1.0f)
     {        
         for (size_t i = 0; i <= kernel.last_index; i++)
