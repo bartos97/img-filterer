@@ -143,3 +143,6 @@ out*
 
 # Non-public things
 example_images/__*
+
+# Custom lib
+!img-lib/lib/
