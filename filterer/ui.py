@@ -40,6 +40,7 @@ class UI:
                     vals.append(float(data))
                 else:
                     raise EmptyFieldError("You must fill all the inputs in kernel!")
+                    # vals.append(1.0)
         return vals
 
     def get_image_content_label(self):
@@ -78,7 +79,7 @@ class UI:
         grid = QGridLayout()
 
         # Regular expresion that will allow to input only int or float (dot seperated)
-        regex = QRegExp("(\d+(?:\.\d+)?)")
+        regex = QRegExp(r"[-+]?\d*\.\d+|\d+")
 
         self.kernel_matrix = [
             [QLineEdit() for _ in range(self.options['INPUTS_WIDTH'])]
