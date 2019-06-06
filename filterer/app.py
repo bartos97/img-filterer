@@ -23,11 +23,11 @@ class App(QWidget):
     def __init__(self, title: str, window_size: tuple):
         super().__init__()
 
-        self.lib = dll.Lib('./img-lib/lib/img-lib')
+        self.__lib = dll.Lib('./img-lib/lib/img-lib')
 
-        self.input_file = ""
-        self.image_pixmap = None
-        self.image_pil = None
+        self.__input_file = ""
+        self.__image_pixmap = None
+        self.__image_pil = None
 
         self.setGeometry(0, 0, *window_size)
         self.showMaximized()
@@ -41,22 +41,22 @@ class App(QWidget):
         btn_save.clicked.connect(self.slot_save_file)
 
     def slot_get_file(self):
-        self.input_file, _ = QFileDialog.getOpenFileName(self,
+        self.__input_file, _ = QFileDialog.getOpenFileName(self,
                                                          'Open file',
                                                          './example_images/',
                                                          'Image files (*.jpg *.gif *.png *.bmp)')
-        if self.input_file:
-            self.image_pil = Image.open(self.input_file)
-            self.image_pil = ImageOps.grayscale(self.image_pil)
+        if self.__input_file:
+            self.__image_pil = Image.open(self.__input_file)
+            self.__image_pil = ImageOps.grayscale(self.__image_pil)
             self.__pil_image_to_pixmap()
             self.__refresh_pixmap()
 
     def slot_apply_filter(self):
-        if not self.image_pil:
-            self.ui.image_frame_content_label.setText("Select image first!")
+        if not self.__image_pil:
+            self.ui.__image_frame_content_label.setText("Select image first!")
             return None
 
-        image_data = np.array(self.image_pil)
+        image_data = np.array(self.__image_pil)
         try:
             kernel = np.array(self.ui.get_input_values(), dtype=np.float32)
         except FiltererException as e:
@@ -66,20 +66,20 @@ class App(QWidget):
             msg.exec_()
             return None
 
-        self.lib.filter_kernel_conv(image_data, self.image_pil.width, kernel)
-        self.image_pil = Image.fromarray(image_data)
+        self.__lib.filter_kernel_conv(image_data, self.__image_pil.width, kernel)
+        self.__image_pil = Image.fromarray(image_data)
 
         self.__pil_image_to_pixmap()
         self.__refresh_pixmap()
 
     def slot_save_file(self):
-        if not self.image_pil:
-            self.ui.image_frame_content_label.setText("Select image first!")
+        if not self.__image_pil:
+            self.ui.get_image_content_label().setText("Select image first!")
             return None
 
         msg = QMessageBox()
         try:
-            self.image_pil.save("./out.jpg", "JPEG")
+            self.__image_pil.save("./out.jpg", "JPEG")
             msg.setText("File saved to ./out.jpg")
             msg.setIcon(QMessageBox.Information)
         except IOError:
@@ -89,24 +89,24 @@ class App(QWidget):
             msg.exec_()
 
     def __create_pixmap(self, file: str):
-        self.image_pixmap = QPixmap(file)
+        self.__image_pixmap = QPixmap(file)
         self.__fix_pixmap_size()
         self.__refresh_pixmap()
 
     def __pil_image_to_pixmap(self):
-        self.image_pixmap = QPixmap(
-            QImage(ImageQt.ImageQt(self.image_pil))
+        self.__image_pixmap = QPixmap(
+            QImage(ImageQt.ImageQt(self.__image_pil))
         )
         self.__fix_pixmap_size()
 
     def __fix_pixmap_size(self):
         max_width, max_height = self.ui.get_image_frame_size()
 
-        if self.image_pixmap.width() > max_width or self.image_pixmap.height() > max_height:
+        if self.__image_pixmap.width() > max_width or self.__image_pixmap.height() > max_height:
             if max_width < max_height:
-                self.image_pixmap = self.image_pixmap.scaledToWidth(max_width)
+                self.__image_pixmap = self.__image_pixmap.scaledToWidth(max_width)
             else:
-                self.image_pixmap = self.image_pixmap.scaledToHeight(max_height)
+                self.__image_pixmap = self.__image_pixmap.scaledToHeight(max_height)
 
     def __refresh_pixmap(self):
-        self.ui.image_frame_content_label.setPixmap(self.image_pixmap)
+        self.ui.get_image_content_label().setPixmap(self.__image_pixmap)
